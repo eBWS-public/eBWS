@@ -1,0 +1,37 @@
+# ==============================================================================
+# Global Configuration for eBWS (eBPF-based Behavioral Working Set HIDS)
+# ==============================================================================
+
+# 1. Storage Paths (absolute or relative to the working directory)
+data_lake_dir: "checkpoint/data_lake"
+bws_dir: "checkpoint/BWS"
+
+# 2. Time Window & Polling Intervals (in seconds)
+time_window: 1.0               # Histogram aggregation window size (Delta t in Sec. III-B)
+monitor_interval: 1.0          # Real-time detection polling interval (seconds)
+collector_interval: 1.0        # eBPF double-buffer swap interval (seconds)
+collector_flush_interval: 60.0 # Interval before flushing collected records to Parquet
+
+# 3. Process Lineage Tree (PL-Tree, Sec. III-D)
+max_tree_size: 50000           # Maximum cached lineage nodes (set <= 0 or null for unbounded)
+
+# 4. BWS Clustering & Distance Threshold (tau_dist, Sec. III-C & Alg. 1)
+min_radius: 1.0e-6             # Minimum anchor radius (epsilon) to prevent division by zero
+manual_anchor_radius: null     # Radius for manual FP anchors (null -> defaults to tau_dist)
+tau_dist_method: "kneedle"     # "kneedle" (Sec. III-C single-tree elbow) or "fixed"
+default_tau_dist: 0.04         # Fallback or fixed distance threshold tau_dist
+kneedle_candidates: [0.10, 0.09, 0.08, 0.07, 0.06, 0.05, 0.04, 0.03, 0.02, 0.01]
+kneedle_S: 1.0                 # Sensitivity parameter S for Kneedle KneeLocator
+
+# 5. Anomaly Score Threshold Calibration (tau_score, Sec. III-C)
+tau_score_method: "tukey"      # "tukey" (Q3 + k * IQR on scores > 1.0), "kmeans", or "fixed"
+tukey_multiplier: 3.0          # IQR multiplier for Tukey's outer fence (3.0 in Sec. III-C)
+default_tau_score: 4.06        # Fallback or fixed anomaly score threshold tau_score
+
+# 6. Real-Time Monitoring & Lifecycle Management (Sec. III-E)
+aging_eviction_threshold: 3600 # Consecutive unmatched intervals before stale anchor eviction
+
+# 7. System Package Paths (used to locate system-installed python3-bpfcc inside virtualenvs)
+system_package_paths:
+  - "/usr/lib/python3/dist-packages"
+  - "/usr/local/lib/python3/dist-packages"

@@ -1,0 +1,17 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Runtime telemetry & model checkpoints
+checkpoint/
+
+# OS / Editor artifacts
+.DS_Store
+*.swp
+
